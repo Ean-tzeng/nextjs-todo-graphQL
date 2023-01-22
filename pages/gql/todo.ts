@@ -12,11 +12,7 @@ export const TodoQuery = gql`
 
 export const TodoDelete = gql`
   mutation DeleteTodo($id: Int!) {
-    deleteTodo(id: $id) {
-      id
-      title
-      finished
-    }
+    deleteTodo(id: $id)
   }
 `;
 
@@ -32,20 +28,12 @@ export const TodoAdd = gql`
 
 export const TodoUpdate = gql`
   mutation UpdateTodo($id: Int!, $title: String!) {
-    updateTodo(id: $id, title: $title) {
-      id
-      title
-      finished
-    }
+    updateTodo(id: $id, title: $title)
   }
 `;
 
 export const TodoFinished = gql`
   mutation SetFinshed($id: Int!, $finished: Boolean!) {
-    setFinish(id: $id, finished: $finished) {
-      id
-      title
-      finished
-    }
+    setFinish(id: $id, finished: $finished)
   }
 `;

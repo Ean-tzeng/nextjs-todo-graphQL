@@ -12,9 +12,9 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    deleteTodo(id: Int!): Todo
+    deleteTodo(id: Int!): Int
     addTodo(title: String!): Todo
-    updateTodo(id: Int!, title: String!): Todo
-    setFinish(id: Int!, finished: Boolean): Todo
+    updateTodo(id: Int!, title: String!): Int
+    setFinish(id: Int!, finished: Boolean): Int
   }
 `;

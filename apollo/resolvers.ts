@@ -1,3 +1,14 @@
+import mysql, { ResultSetHeader } from "mysql2/promise";
+
+const conn = async () =>
+  mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "root",
+    database: "db",
+    port: 8889,
+  });
+
 const todos = [
   {
     id: 1,
@@ -10,45 +21,43 @@ let uuid = 1;
 
 export const resolvers = {
   Query: {
-    todos() {
-      return todos;
+    async todos() {
+      const [rows] = await (await conn()).execute("SELECT * FROM todos");
+      return rows;
     },
   },
   Mutation: {
-    addTodo(root, args, context) {
+    async addTodo(root, args, context) {
       const { title } = args;
-      uuid += 1;
       const todo = {
-        id: uuid,
         title,
         finished: false,
       };
-      todos.push(todo);
-      return todo;
+      const [result] = await (
+        await conn()
+      ).execute(`INSERT INTO todos(id,title) VALUES(default,'${title}');`);
+      return { ...todo, id: (result as ResultSetHeader).insertId };
     },
-    deleteTodo(root, args, context) {
+    async deleteTodo(root, args, context) {
       const { id } = args;
-      const idx = todos.findIndex((todo) => todo.id === id);
-      const todo = todos.splice(idx, 1);
-      console.log(todo);
-      return;
+      const [result] = await (
+        await conn()
+      ).execute("DELETE FROM `todos` WHERE `id`=" + id);
+      return id;
     },
-    updateTodo(root, args, contest) {
+    async updateTodo(root, args, contest) {
       const { id, title } = args;
-      const todo = todos.find((t) => t.id === id);
-      console.log(typeof id, title, todos);
-      if (todo) {
-        todo.title = title;
-      }
-      return todo;
+      const [result] = await (
+        await conn()
+      ).execute(`UPDATE todos SET title='${title}' WHERE id=${id}`);
+      return id;
     },
-    setFinish(root, args, context) {
+    async setFinish(root, args, context) {
       const { id, finished } = args;
-      const todo = todos.find((t) => t.id === id);
-      if (todo) {
-        todo.finished = finished;
-      }
-      return todo;
+      const [result] = await (
+        await conn()
+      ).execute(`UPDATE todos SET finished=${finished} WHERE id=${id}`);
+      return id;
     },
   },
 };
